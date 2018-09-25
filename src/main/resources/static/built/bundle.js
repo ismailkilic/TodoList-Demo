@@ -43208,7 +43208,8 @@ class TodoList extends React.Component {
 
         return {
           items: myItems,
-          originalitems: myItems
+          originalitems: myItems,
+          updatedItemName: ''
         };
       });
     });
@@ -43288,6 +43289,7 @@ class TodoList extends React.Component {
     let handleUpdateItem = this.handleUpdateItem;
     let handleOrderBy = this.handleOrderBy;
     let toggleEditingOff = this.toggleEditingOff;
+    let handleSubmit = this.handleSubmit;
     let handleItemCheckboxChange = this.handleItemCheckboxChange;
     let handleChangeFilter = this.handleChangeFilter;
     let listId = this.props.listId;
@@ -43360,10 +43362,9 @@ class TodoList extends React.Component {
       sm: 2
     }, React.createElement(Row, null, React.createElement("div", null, " Expired Date:")), React.createElement(Row, null, React.createElement("input", {
       type: "date",
-      className: "form__input",
-      placeholder: "expired date",
-      value: this.props.itemAdderName,
-      onChange: e => this.props.onItemAdderNameChange(this.props.index, e.target.value)
+      "data-date": "",
+      "data-date-format": "DD MMMM YYYY",
+      value: "2015-08-09"
     }))), React.createElement(Col, {
       sm: 1
     }, " ", React.createElement(Row, null, React.createElement("div", null, " '")), React.createElement(Row, null, React.createElement(Button, {

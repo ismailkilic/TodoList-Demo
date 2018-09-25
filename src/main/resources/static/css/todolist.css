@@ -60,7 +60,7 @@ body {
     float: right;
     padding: 0;
     line-height: 30px;
-margin-left: 20px;
+    margin-left: 20px;
     width: 80px;
     outline: none;
 }
@@ -76,8 +76,6 @@ margin-left: 20px;
 
     line-height: 40px;
 }
-
-
 
 .todo-item__delete-button {
     float: right;
@@ -106,8 +104,8 @@ margin-left: 20px;
 .list-group {
     margin-bottom: 0px;
 
-
 }
+
 .sub_item {
     margin-left: 30px;
     border-bottom: 2px solid #837c7c;
@@ -134,7 +132,6 @@ margin-left: 20px;
     vertical-align: top;
     margin-right: 10px;
 }
-
 
 .delete_button {
     font-family: 'quicksand';
@@ -173,7 +170,6 @@ margin-left: 20px;
     color: #434343;
 }
 
-
 .footer__button:hover {
     box-sizing: border-box;
     box-shadow: 0 0 2px black;
@@ -201,10 +197,9 @@ margin-left: 20px;
     line-height: 20px;
     vertical-align: top;
     margin-left: 10px;
-margin-bottom: 15px;
+    margin-bottom: 15px;
     color: black;
 }
-
 
 .active {
     border: 2px solid black;
@@ -213,6 +208,6 @@ margin-bottom: 15px;
     font-weight: bold;
 }
 
-.disabled{
+.disabled {
     text-decoration: line-through;
 }

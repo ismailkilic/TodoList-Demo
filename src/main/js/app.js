@@ -34,6 +34,7 @@ class App extends React.Component {
         this.handleUpdatedListNameChange = this.handleUpdatedListNameChange.bind(this);
         this.handleItemAdderNameChange = this.handleItemAdderNameChange.bind(this);
         this.handleItemAdderDescriptionChange = this.handleItemAdderDescriptionChange.bind(this);
+
         this.handleNewList = this.handleNewList.bind(this);
         this.handleDeleteList = this.handleDeleteList.bind(this);
         this.handleUpdateList = this.handleUpdateList.bind(this);
@@ -76,6 +77,7 @@ class App extends React.Component {
             };
         });
     }
+
 
     handleNewListNameChange(listName) {
         this.setState({newListName: listName});
@@ -136,6 +138,7 @@ class App extends React.Component {
                 myTodoItemAdders[index] = '';
                 let myTodoItemAddersDescription = prevState.todoItemAdderDescription;
                 myTodoItemAddersDescription[index] = '';
+
                 return {
                     todoLists: myTodoLists,
                     todoItemAdderName: myTodoItemAdders,
@@ -202,11 +205,13 @@ class App extends React.Component {
                 <TodoLists lists={this.state.todoLists}
                            itemAdderName={this.state.todoItemAdderName}
                            itemAdderDescription={this.state.todoItemAdderDescription}
+
                            updatedListName={this.state.updatedListName}
                            onDeleteList={this.handleDeleteList}
                            onUpdateList={this.handleUpdateList}
                            onListNameChange={this.handleUpdatedListNameChange}
                            onItemAdderDescriptionChange={this.handleItemAdderDescriptionChange}
+
                            onItemAdderNameChange={this.handleItemAdderNameChange}
                            onAddItem={this.handleNewItem}
                 />
@@ -323,12 +328,15 @@ class TodoLists extends React.Component {
                 <TodoList index={index}
                           listId={list.id}
                           items={list.items}
+
                           onItemAdderNameChange={this.props.onItemAdderNameChange}
                           onItemAdderDescriptionChange={this.props.onItemAdderDescriptionChange}
+
 
                           onAddItem={this.props.onAddItem}
                           itemAdderName={this.props.itemAdderName[index]}
                           itemAdderDescription={this.props.itemAdderDescription[index]}
+
                 />
 
 
@@ -360,7 +368,7 @@ class TodoList extends React.Component {
     }
 
     componentDidMount() {
-        this.setState({items: this.props.items, originalitems: this.props.items});
+       this.setState({items: this.props.items, originalitems: this.props.items});
     }
 
     toggleEditingOff() {
@@ -444,7 +452,8 @@ class TodoList extends React.Component {
                 //this.state.originalitems = myItems;
                 return {
                     items: myItems,
-                    originalitems: myItems
+                    originalitems: myItems,
+                    updatedItemName: ''
                 };
             });
         })
@@ -479,14 +488,12 @@ class TodoList extends React.Component {
 
     handleItemCheckboxChange(listId, itemId) {
         let itemToToggle = this.state.items.filter(item => item.id === itemId)[0];
-
         if (itemToToggle == null) {
             console.log(itemId);
 
             itemToToggle = this.state.items.flatMap(x => x.items).filter(item => item.id === itemId)[0];
 
         }
-
         itemToToggle.completed = !itemToToggle.completed;
         fetch('/lists/' + listId + '/items/' + itemId, {
             method: 'PUT',
@@ -530,6 +537,7 @@ class TodoList extends React.Component {
         let handleUpdateItem = this.handleUpdateItem;
         let handleOrderBy = this.handleOrderBy;
         let toggleEditingOff = this.toggleEditingOff;
+        let handleSubmit = this.handleSubmit;
         let handleItemCheckboxChange = this.handleItemCheckboxChange;
         let handleChangeFilter = this.handleChangeFilter;
         let listId = this.props.listId;
@@ -663,6 +671,7 @@ class TodoList extends React.Component {
                                 <input type="date" className="form__input"
                                        placeholder="expired date" value={this.props.itemAdderName}
                                        onChange={(e) => this.props.onItemAdderNameChange(this.props.index, e.target.value)}/>
+
                             </Row>
 
 
