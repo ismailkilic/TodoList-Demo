@@ -5,6 +5,7 @@ TodoList Application (Spring Boot - React - Hibernate)
 Hey developer you don't need anything for run that application. If you have an awesome IDE like Intellij IDEA, you can just run it. If you want change something with your experience, you should look to Prerequisites :sunglasses:
 
 Tomcat will be started on port(s): 8004 (http)
+
 User: ismail@example.com Password: password
 
 ### Prerequisites for build and recreate bundle.js 
