@@ -28,8 +28,8 @@ body {
     background: transparent;
     border: 1px solid black;
     border-radius: 5px;
-    font-size: 1.4em;
-    height: 40px;
+    font-size: 1.2em;
+    height: 30px;
     padding: 0 10px;
     width: 200px;
     outline: none;
@@ -56,12 +56,12 @@ body {
     border: 1px solid black;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 1.4em;
+    font-size: 1.2em;
     float: right;
     padding: 0;
-    line-height: 40px;
-    vertical-align: top;
-    width: 115px;
+    line-height: 30px;
+margin-left: 20px;
+    width: 80px;
     outline: none;
 }
 
@@ -85,6 +85,22 @@ body {
     font-size: 1.4em;
 
     width: 40px;
+}
+
+.todo-item__deadline_span {
+    float: right;
+    text-align: right;
+    color: darkred;
+}
+
+.todo-item__header_span {
+
+    margin-left: 20px;
+    margin-right: 40px;
+    font-size: 1.1em;
+    color: black;
+    text-decoration: underline;
+    font-weight: bold;
 }
 
 .list-group {
@@ -111,10 +127,10 @@ body {
     border: 2px solid black;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 1.4em;
+    font-size: 1.2em;
     outline: 0;
     padding: 0 10px;
-    line-height: 40px;
+    line-height: 30px;
     vertical-align: top;
     margin-right: 10px;
 }
@@ -150,6 +166,11 @@ body {
     margin-left: 10px;
 
     color: green;
+}
+
+.sub_item__name {
+
+    color: #434343;
 }
 
 

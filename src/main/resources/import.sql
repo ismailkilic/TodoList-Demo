@@ -15,9 +15,9 @@ insert into todo_item(id, name, todo_list_id, completed, owner_user_id,descripti
 insert into todo_item(id, name, todo_list_id, completed, owner_user_id,description,deadline,create_at) values (2, 'Item 2', 1, FALSE, 1,'Description 2','2018-09-28','2018-09-25');
 insert into todo_item(id, name, todo_list_id, completed, owner_user_id,description,deadline,create_at,TODO_ITEM_PARENT_ID) values (7, 'Sub Item', 1, FALSE, 1,'Description 4','2018-09-28','2018-09-25',2);
 insert into todo_item(id, name, todo_list_id, completed, owner_user_id,description,deadline,create_at,TODO_ITEM_PARENT_ID) values (8, 'Sub Item', 1, FALSE, 1,'Description 5','2018-09-28','2018-09-26',2);
-insert into todo_item(id, name, todo_list_id, completed, owner_user_id,description,deadline,create_at) values (3, 'Item 3', 1, FALSE, 1,'Description 3','2018-09-28','2018-09-24');
-insert into todo_item(id, name, todo_list_id, completed, owner_user_id,description,deadline,create_at,TODO_ITEM_PARENT_ID) values (9, 'Sub Item', 1, FALSE, 1,'Description sub','2018-09-28','2018-09-25',3);
-insert into todo_item(id, name, todo_list_id, completed, owner_user_id,description,deadline,create_at,TODO_ITEM_PARENT_ID) values (10, 'Sub Item', 1, FALSE, 1,'Description sub','2018-09-28','2018-09-26',3);
+insert into todo_item(id, name, todo_list_id, completed, owner_user_id,description,deadline,create_at) values (3, 'Item 3', 1, FALSE, 1,'Description 3','2018-09-24','2018-09-24');
+insert into todo_item(id, name, todo_list_id, completed, owner_user_id,description,deadline,create_at,TODO_ITEM_PARENT_ID) values (9, 'Sub Item', 1, FALSE, 1,'Description sub','2018-09-24','2018-09-25',3);
+insert into todo_item(id, name, todo_list_id, completed, owner_user_id,description,deadline,create_at,TODO_ITEM_PARENT_ID) values (10, 'Sub Item', 1, FALSE, 1,'Description sub','2018-09-24','2018-09-26',3);
 
 insert into todo_item(id, name, todo_list_id, completed, owner_user_id,description,deadline,create_at) values (4, 'Item A', 2, FALSE, 1,'Description 4','2018-09-28','2018-09-24');
 insert into todo_item(id, name, todo_list_id, completed, owner_user_id,description,deadline,create_at,TODO_ITEM_PARENT_ID) values (12, 'Sub Item', 2, FALSE, 1,'Description sub','2018-09-28','2018-09-26',4);

@@ -43140,12 +43140,16 @@ class TodoList extends React.Component {
   handleChangeFilter(filterType) {
     let myItems = this.state.originalitems;
 
-    if (filterType === 1) {
+    if (filterType === "noncompleted") {
       myItems = myItems.filter(item => !item.completed);
     }
 
-    if (filterType === 2) {
+    if (filterType === "completed") {
       myItems = myItems.filter(item => item.completed);
+    }
+
+    if (filterType === "expired") {
+      myItems = myItems.filter(item => item.deadline < new Date());
     } // return {
     //     items: items
     // };
@@ -43294,10 +43298,12 @@ class TodoList extends React.Component {
       }, React.createElement("span", {
         className: item.completed || item.items != null && item.items.length == item.items.filter(x => x.completed).length && item.items.length > 0 ? "todo-item__name disabled" : "todo-item__name",
         onClick: () => item.items == null || item.items.length <= 0 ? handleItemCheckboxChange(listId, item.id) : null
-      }, item.name, " - ", item.description, " - ", moment(item.deadline).format("DD-MM-YYYY"), " "), React.createElement("span", {
+      }, item.name, " - ", item.description, " "), React.createElement("span", {
         className: "todo-item__delete-button",
         onClick: () => handleDeleteItem(listId, item.id)
-      }, "\xD7")), item.items != null && item.items.length == item.items.filter(x => x.completed).length && item.items.length > 0 && !item.completed ? handleItemCheckboxChange(listId, item.id) : null // if subitems complated, update maintodoItem;
+      }, "\xD7"), React.createElement("span", {
+        className: "todo-item__deadline_span"
+      }, " ", moment(item.deadline).format("DD-MM-YYYY"))), item.items != null && item.items.length == item.items.filter(x => x.completed).length && item.items.length > 0 && !item.completed ? handleItemCheckboxChange(listId, item.id) : null // if subitems complated, update maintodoItem;
       , item.items != null && item.items.length != item.items.filter(x => x.completed).length && item.items.length > 0 && item.completed ? handleItemCheckboxChange(listId, item.id) : null // if subitems complated, update maintodoItem
       , item.items != null && item.items.length > 0 ? React.createElement("div", null, item.items.map(subitem => React.createElement("li", {
         className: "sub_item",
@@ -43305,10 +43311,12 @@ class TodoList extends React.Component {
       }, React.createElement("span", {
         className: subitem.completed ? "sub_item__name disabled" : "sub_item__name",
         onClick: () => handleItemCheckboxChange(listId, subitem.id)
-      }, subitem.name, " - ", subitem.description, " - ", moment(subitem.deadline).format("DD-MM-YYYY"), " "), React.createElement("span", {
+      }, subitem.name, " - ", subitem.description, " "), React.createElement("span", {
         className: "todo-item__delete-button",
         onClick: () => handleDeleteItem(listId, subitem.id)
-      }, "\xD7")))) : React.createElement("div", null));
+      }, "\xD7"), React.createElement("span", {
+        className: "todo-item__deadline_span"
+      }, " ", moment(subitem.deadline).format("DD-MM-YYYY"))))) : React.createElement("div", null));
     });
     return React.createElement("div", null, React.createElement("div", {
       className: "order_div"
@@ -43325,7 +43333,11 @@ class TodoList extends React.Component {
     }, React.createElement(Button, {
       className: 'order_button',
       onClick: () => handleOrderBy("deadline")
-    }, "Order by item deadline")), React.createElement("br", null), React.createElement("div", null, " ( ", this.state.originalitems.filter(e => e.completed).length, " / ", this.state.originalitems.length, " Complated )"), React.createElement(ListGroup, null, items), React.createElement(Form, {
+    }, "Order by item deadline")), React.createElement("br", null), React.createElement("div", null, " ( ", this.state.originalitems.filter(e => e.completed).length, " / ", this.state.originalitems.length, " Complated )"), React.createElement("br", null), React.createElement("span", {
+      className: "todo-item__header_span"
+    }, "Item Name and Description"), React.createElement("span", {
+      className: "todo-item__deadline_span todo-item__header_span"
+    }, " Deadline"), React.createElement(ListGroup, null, items), React.createElement(Form, {
       onSubmit: this.handleSubmit,
       horizontal: true
     }, React.createElement(FormGroup, null, React.createElement(Col, {
@@ -43353,7 +43365,7 @@ class TodoList extends React.Component {
       value: this.props.itemAdderName,
       onChange: e => this.props.onItemAdderNameChange(this.props.index, e.target.value)
     }))), React.createElement(Col, {
-      sm: 2
+      sm: 1
     }, " ", React.createElement(Row, null, React.createElement("div", null, " '")), React.createElement(Row, null, React.createElement(Button, {
       className: "form__button",
       onClick: e => this.props.onAddItem(this.props.index, this.props.listId)
@@ -43370,14 +43382,17 @@ class Footer extends React.Component {
       className: "footer"
     }, React.createElement(Button, {
       className: 'footer__button ',
-      onClick: () => this.props.changedFilter(0)
+      onClick: () => this.props.changedFilter("all")
     }, "All"), React.createElement(Button, {
       className: 'footer__button ',
-      onClick: () => this.props.changedFilter(1)
+      onClick: () => this.props.changedFilter("noncompleted")
     }, "Active"), React.createElement(Button, {
       className: 'footer__button ',
-      onClick: () => this.props.changedFilter(2)
-    }, "Complited"));
+      onClick: () => this.props.changedFilter("completed")
+    }, "Completed"), React.createElement(Button, {
+      className: 'footer__button ',
+      onClick: () => this.props.changedFilter("expired")
+    }, "Expired"));
   }
 
 }
@@ -43424,48 +43439,6 @@ class EditUpdateDeleteObject extends React.Component {
       bsStyle: "danger",
       onClick: () => this.handleDeleteButtonClick(obj.id)
     }, "Delete")))));
-  }
-
-}
-
-class Search extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      searchText: ''
-    };
-    this.onSearchChange = this.onSearchChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  onSearchChange(e) {
-    //console.log('onSearchChange: ', e.target.value );
-    this.setState({
-      searchText: e.target.value
-    });
-  }
-
-  handleSubmit(e) {
-    e.preventDefault();
-    console.log(this.state.searchText);
-    this.props.onSearch(this.query.value);
-    e.currentTarget.reset();
-  }
-
-  render() {
-    const searchValue = this.state.searchText;
-    return React.createElement("form", {
-      onSubmit: this.handleSubmit
-    }, React.createElement(FormGroup, null, React.createElement(InputGroup, null, React.createElement(FormControl, {
-      ref: input => this.query = input,
-      onChange: this.onSearchChange,
-      type: "text",
-      className: "form-control",
-      placeholder: "Search"
-    }), React.createElement(InputGroup.Button, null, React.createElement("button", {
-      type: "submit",
-      className: "btn btn-primary"
-    }, "Submit")))));
   }
 
 }

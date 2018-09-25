@@ -370,12 +370,16 @@ class TodoList extends React.Component {
     handleChangeFilter(filterType) {
         let myItems = this.state.originalitems;
 
-        if (filterType === 1) {
+        if (filterType === "noncompleted") {
             myItems = myItems.filter(item => !item.completed);
 
         }
-        if (filterType === 2) {
+        if (filterType === "completed") {
             myItems = myItems.filter(item => item.completed);
+
+        }
+        if (filterType === "expired") {
+            myItems = myItems.filter(item => item.deadline< new Date());
 
         }
         // return {
@@ -533,15 +537,17 @@ class TodoList extends React.Component {
 
                 return (
                     <div>
+
                         <li className="todo-item" key={item.id}
                             >
                             <span
                                 className={item.completed || item.items != null && item.items.length == item.items.filter(x => x.completed).length && item.items.length > 0 ? "todo-item__name disabled" : "todo-item__name"}
                                 onClick={() => item.items == null || item.items.length <= 0 ? handleItemCheckboxChange(listId, item.id) : null}
-                            >{item.name} - {item.description} - {moment(item.deadline).format("DD-MM-YYYY")} </span>
+                            >{item.name} - {item.description} </span>
                             <span className="todo-item__delete-button"
                                   onClick={() => handleDeleteItem(listId, item.id)}>×</span>
-
+                            <span className="todo-item__deadline_span"
+                            > {moment(item.deadline).format("DD-MM-YYYY")}</span>
                         </li>
                         {
                             item.items != null && item.items.length == item.items.filter(x => x.completed).length && item.items.length > 0 && !item.completed ?
@@ -561,9 +567,13 @@ class TodoList extends React.Component {
                             <span
                                 className={subitem.completed ? "sub_item__name disabled" : "sub_item__name"}
                                 onClick={() => handleItemCheckboxChange(listId, subitem.id)}
-                            >{subitem.name} - {subitem.description} - {moment(subitem.deadline).format("DD-MM-YYYY")} </span>
+                            >{subitem.name} - {subitem.description} </span>
                                         <span className="todo-item__delete-button"
                                               onClick={() => handleDeleteItem(listId, subitem.id)}>×</span>
+                                        <span className="todo-item__deadline_span"
+                                              > {moment(subitem.deadline).format("DD-MM-YYYY")}</span>
+
+
                                     </li>
                                 ))}
                             </div>
@@ -597,6 +607,12 @@ class TodoList extends React.Component {
                 <div> ( {this.state.originalitems.filter(e => e.completed).length} / {this.state.originalitems.length} Complated
                     )
                 </div>
+
+                <br/>
+
+                <span  className={"todo-item__header_span"}>Item Name and Description</span>
+                <span className="todo-item__deadline_span todo-item__header_span"
+                > Deadline</span>
 
                 <ListGroup>
                     {items}
@@ -651,7 +667,7 @@ class TodoList extends React.Component {
 
 
                         </Col>
-                        <Col sm={2}> <Row>
+                        <Col sm={1}> <Row>
                             <div> '</div>
 
                         </Row>
@@ -683,9 +699,10 @@ class Footer extends React.Component {
     render() {
         return (
             <footer className="footer">
-                <Button className={'footer__button '} onClick={() => this.props.changedFilter(0)}>All</Button>
-                <Button className={'footer__button '} onClick={() => this.props.changedFilter(1)}>Active</Button>
-                <Button className={'footer__button '} onClick={() => this.props.changedFilter(2)}>Complited</Button>
+                <Button className={'footer__button '} onClick={() => this.props.changedFilter("all")}>All</Button>
+                <Button className={'footer__button '} onClick={() => this.props.changedFilter("noncompleted")}>Active</Button>
+                <Button className={'footer__button '} onClick={() => this.props.changedFilter("completed")}>Completed</Button>
+                <Button className={'footer__button '} onClick={() => this.props.changedFilter("expired")}>Expired</Button>
 
             </footer>
         )
@@ -749,57 +766,6 @@ class EditUpdateDeleteObject extends React.Component {
 
 }
 
-class Search extends React.Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            searchText: ''
-        };
-
-        this.onSearchChange = this.onSearchChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    onSearchChange(e) {
-        //console.log('onSearchChange: ', e.target.value );
-        this.setState(
-            {
-                searchText: e.target.value
-            }
-        );
-    }
-
-    handleSubmit(e) {
-        e.preventDefault();
-        console.log(this.state.searchText);
-        this.props.onSearch(this.query.value);
-        e.currentTarget.reset();
-    }
-
-    render() {
-        const searchValue = this.state.searchText;
-
-        return (
-
-            <form onSubmit={this.handleSubmit}>
-                <FormGroup>
-                    <InputGroup>
-                        <FormControl
-                            ref={(input) => this.query = input} onChange={this.onSearchChange} type="text"
-                            className="form-control" placeholder="Search"
-                        />
-                        <InputGroup.Button>
-                            <button type="submit" className="btn btn-primary">Submit</button>
-                        </InputGroup.Button>
-                    </InputGroup>
-                </FormGroup>
-
-
-            </form>
-        );
-    }
-}
 
 ReactDOM.render(
     <App/>,
