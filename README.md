@@ -8,6 +8,10 @@ Tomcat will be started on port(s): 8004 (http)
 
 User: ismail@example.com Password: password
 
+```
+Note: Project SDK should be Java_1.8
+```
+
 ### Prerequisites for build and recreate bundle.js 
 Please fallow steps for build and recreate bundle.js 
 
