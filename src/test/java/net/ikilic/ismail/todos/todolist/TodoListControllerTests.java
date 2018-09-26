@@ -15,6 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -76,9 +77,9 @@ public class TodoListControllerTests {
     @WithUserDetails("ismail@example.com")
     public void testCreateItem() throws Exception {
         String requestBody = mapper.writeValueAsString(
-                new TodoItemRequest("buy milk","description",new Date(1537787045)));
+                new TodoItemRequest("be successfully","description",new Date(1537787045)));
 
-        TodoItemCreatedResponse response = new TodoItemCreatedResponse("1", "buy milk","description",new Date(1537787045),null);
+        TodoItemCreatedResponse response = new TodoItemCreatedResponse("1", "be successfully","description",new Date(1537787045),new ArrayList<>());
 
         TodoList todoList = new TodoList("chores", new User());
         todoList.setId(1L);
@@ -86,7 +87,7 @@ public class TodoListControllerTests {
         when(repository.findOneByIdAndOwner(eq(1L), any(User.class)))
                 .thenReturn(todoList);
 
-        TodoItem todoItem = new TodoItem("buy milk", todoList, new User(),"description",new Date(1537787045));
+        TodoItem todoItem = new TodoItem("be successfully", todoList, new User(),"description",new Date(1537787045));
         todoItem.setId(1L);
 
         when(itemRepository.save(any(TodoItem.class))).thenReturn(todoItem);
@@ -177,10 +178,10 @@ public class TodoListControllerTests {
         list.setOwner(owner);
         Date tempDate=new Date();
 
-        TodoItem todoItem = new TodoItem("buy milk", list, owner,"description",tempDate);
+        TodoItem todoItem = new TodoItem("be successfully", list, owner,"description",tempDate);
         when(itemRepository.findOneByIdAndListAndOwner(eq(1L), any(TodoList.class), any(User.class))).thenReturn(todoItem);
 
-        TodoItemRequest request = new TodoItemRequest("Buy Milk","description",tempDate);
+        TodoItemRequest request = new TodoItemRequest("Be successfully","description",tempDate);
         String requestBody = mapper.writeValueAsString(request);
 
         mvc.perform(put("/lists/{id}/items/{itemId}", 1L, 1L)

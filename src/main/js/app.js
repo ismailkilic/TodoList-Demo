@@ -34,6 +34,7 @@ class App extends React.Component {
         this.handleUpdatedListNameChange = this.handleUpdatedListNameChange.bind(this);
         this.handleItemAdderNameChange = this.handleItemAdderNameChange.bind(this);
         this.handleItemAdderDescriptionChange = this.handleItemAdderDescriptionChange.bind(this);
+        this.handleItemAdderDeadlineChange = this.handleItemAdderDeadlineChange.bind(this);
 
         this.handleNewList = this.handleNewList.bind(this);
         this.handleDeleteList = this.handleDeleteList.bind(this);
@@ -53,7 +54,7 @@ class App extends React.Component {
                 todoLists: json,
                 todoItemAdderName: new Array(json.length).fill(''),
                 todoItemAdderDescription: new Array(json.length).fill(''),
-                todoItemAdderDeadline: new Array(json.length).fill('')
+                todoItemAdderDeadline: new Array(json.length).fill( moment().format("DD/MM/YYYY"))
             });
         });
     }
@@ -74,6 +75,16 @@ class App extends React.Component {
             myTodoItemAdders[index] = name;
             return {
                 todoItemAdderDescription: myTodoItemAdders
+            };
+        });
+    }
+
+    handleItemAdderDeadlineChange(index, name) {
+        this.setState(function (prevState, props) {
+            let myTodoItemAdders = prevState.todoItemAdderDeadline;
+            myTodoItemAdders[index] = name;
+            return {
+                todoItemAdderDeadline: myTodoItemAdders
             };
         });
     }
@@ -113,10 +124,13 @@ class App extends React.Component {
     }
 
     handleNewItem(index, listId) {
+        console.log(moment(this.state.todoItemAdderDeadline[index], "DD/MM/YYYY").isValid());
         let newItem = {
             name: this.state.todoItemAdderName[index],
-            description: this.state.todoItemAdderDescription[index]
+            description: this.state.todoItemAdderDescription[index],
+            deadline: moment(this.state.todoItemAdderDeadline[index], "DD/MM/YYYY").isValid() ? moment(this.state.todoItemAdderDeadline[index], "DD/MM/YYYY").format("YYYY-MM-DD") : moment().format("YYYY-MM-DD")
         }
+        console.log(newItem);
         fetch('/lists/' + listId + '/items', {
             method: 'POST',
             credentials: 'same-origin',
@@ -138,11 +152,14 @@ class App extends React.Component {
                 myTodoItemAdders[index] = '';
                 let myTodoItemAddersDescription = prevState.todoItemAdderDescription;
                 myTodoItemAddersDescription[index] = '';
+                let myTodoItemAddersDeadline = prevState.todoItemAdderDeadline;
+                myTodoItemAddersDeadline[index] = moment().format("DD/MM/YYYY");
 
                 return {
                     todoLists: myTodoLists,
                     todoItemAdderName: myTodoItemAdders,
-                    todoItemAdderDescription: myTodoItemAddersDescription
+                    todoItemAdderDescription: myTodoItemAddersDescription,
+                    todoItemAdderDeadline: myTodoItemAddersDeadline
                 };
             });
         });
@@ -205,12 +222,14 @@ class App extends React.Component {
                 <TodoLists lists={this.state.todoLists}
                            itemAdderName={this.state.todoItemAdderName}
                            itemAdderDescription={this.state.todoItemAdderDescription}
+                           itemAdderDeadline={this.state.todoItemAdderDeadline}
 
                            updatedListName={this.state.updatedListName}
                            onDeleteList={this.handleDeleteList}
                            onUpdateList={this.handleUpdateList}
                            onListNameChange={this.handleUpdatedListNameChange}
                            onItemAdderDescriptionChange={this.handleItemAdderDescriptionChange}
+                           onItemAdderDeadlineChange={this.handleItemAdderDeadlineChange}
 
                            onItemAdderNameChange={this.handleItemAdderNameChange}
                            onAddItem={this.handleNewItem}
@@ -331,11 +350,13 @@ class TodoLists extends React.Component {
 
                           onItemAdderNameChange={this.props.onItemAdderNameChange}
                           onItemAdderDescriptionChange={this.props.onItemAdderDescriptionChange}
+                          onItemAdderDeadlineChange={this.props.onItemAdderDeadlineChange}
 
 
                           onAddItem={this.props.onAddItem}
                           itemAdderName={this.props.itemAdderName[index]}
                           itemAdderDescription={this.props.itemAdderDescription[index]}
+                          itemAdderDeadline={this.props.itemAdderDeadline[index]}
 
                 />
 
@@ -368,7 +389,13 @@ class TodoList extends React.Component {
     }
 
     componentDidMount() {
-       this.setState({items: this.props.items, originalitems: this.props.items});
+        this.setState({items: this.props.items, originalitems: this.props.items});
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.items.length < this.props.items)
+            this.setState({items: prevProps.items, originalitems: prevProps.items});
+
     }
 
     toggleEditingOff() {
@@ -387,7 +414,7 @@ class TodoList extends React.Component {
 
         }
         if (filterType === "expired") {
-            myItems = myItems.filter(item => item.deadline< new Date());
+            myItems = myItems.filter(item => item.deadline < new Date());
 
         }
         // return {
@@ -445,7 +472,7 @@ class TodoList extends React.Component {
 
                 myItems.forEach(function (item) {
                     if (item.items != null && item.items.length > 0) {
-                        item.items=item.items.filter(i => i.id !== itemId);
+                        item.items = item.items.filter(i => i.id !== itemId);
                     }
                 });
 
@@ -543,52 +570,52 @@ class TodoList extends React.Component {
         let listId = this.props.listId;
         let items = this.state.items.filter(x => this.state.items.flatMap(t => t.items).filter(t => t != null).map(d => d.id).indexOf(x.id) == -1).map(function (item) {
 
-                return (
-                    <div>
+            return (
+                <div>
 
-                        <li className="todo-item" key={item.id}
-                            >
+                    <li className="todo-item" key={item.id}
+                    >
                             <span
                                 className={item.completed || item.items != null && item.items.length == item.items.filter(x => x.completed).length && item.items.length > 0 ? "todo-item__name disabled" : "todo-item__name"}
                                 onClick={() => item.items == null || item.items.length <= 0 ? handleItemCheckboxChange(listId, item.id) : null}
                             >{item.name} - {item.description} </span>
-                            <span className="todo-item__delete-button"
-                                  onClick={() => handleDeleteItem(listId, item.id)}>×</span>
-                            <span className="todo-item__deadline_span"
-                            > {moment(item.deadline).format("DD-MM-YYYY")}</span>
-                        </li>
-                        {
-                            item.items != null && item.items.length == item.items.filter(x => x.completed).length && item.items.length > 0 && !item.completed ?
-                                handleItemCheckboxChange(listId, item.id) : null // if subitems complated, update maintodoItem;
-                        }
+                        <span className="todo-item__delete-button"
+                              onClick={() => handleDeleteItem(listId, item.id)}>×</span>
+                        <span className="todo-item__deadline_span"
+                        > {moment(item.deadline).format("DD-MM-YYYY")}</span>
+                    </li>
+                    {
+                        item.items != null && item.items.length == item.items.filter(x => x.completed).length && item.items.length > 0 && !item.completed ?
+                            handleItemCheckboxChange(listId, item.id) : null // if subitems complated, update maintodoItem;
+                    }
 
-                        {item.items != null && item.items.length != item.items.filter(x => x.completed).length && item.items.length > 0 && item.completed ?
-                            handleItemCheckboxChange(listId, item.id) : null // if subitems complated, update maintodoItem
-                        }
+                    {item.items != null && item.items.length != item.items.filter(x => x.completed).length && item.items.length > 0 && item.completed ?
+                        handleItemCheckboxChange(listId, item.id) : null // if subitems complated, update maintodoItem
+                    }
 
-                        {item.items != null && item.items.length > 0 ?
+                    {item.items != null && item.items.length > 0 ?
 
-                            <div>
-                                {item.items.map((subitem) => (
-                                    <li className="sub_item" key={subitem.id}
-                                       >
+                        <div>
+                            {item.items.map((subitem) => (
+                                <li className="sub_item" key={subitem.id}
+                                >
                             <span
                                 className={subitem.completed ? "sub_item__name disabled" : "sub_item__name"}
                                 onClick={() => handleItemCheckboxChange(listId, subitem.id)}
                             >{subitem.name} - {subitem.description} </span>
-                                        <span className="todo-item__delete-button"
-                                              onClick={() => handleDeleteItem(listId, subitem.id)}>×</span>
-                                        <span className="todo-item__deadline_span"
-                                              > {moment(subitem.deadline).format("DD-MM-YYYY")}</span>
+                                    <span className="todo-item__delete-button"
+                                          onClick={() => handleDeleteItem(listId, subitem.id)}>×</span>
+                                    <span className="todo-item__deadline_span"
+                                    > {moment(subitem.deadline).format("DD-MM-YYYY")}</span>
 
 
-                                    </li>
-                                ))}
-                            </div>
-                            :
-                            <div></div>}
-                    </div>
-                );
+                                </li>
+                            ))}
+                        </div>
+                        :
+                        <div></div>}
+                </div>
+            );
 
 
         });
@@ -618,7 +645,7 @@ class TodoList extends React.Component {
 
                 <br/>
 
-                <span  className={"todo-item__header_span"}>Item Name and Description</span>
+                <span className={"todo-item__header_span"}>Item Name and Description</span>
                 <span className="todo-item__deadline_span todo-item__header_span"
                 > Deadline</span>
 
@@ -668,9 +695,9 @@ class TodoList extends React.Component {
                             </Row>
                             <Row>
 
-                                <input type="date" className="form__input"
-                                       placeholder="expired date" value={this.props.itemAdderName}
-                                       onChange={(e) => this.props.onItemAdderNameChange(this.props.index, e.target.value)}/>
+                                <input type="text" className="form__input"
+                                       placeholder="DD/MM/YYYY" value={this.props.itemAdderDeadline}
+                                       onChange={(e) => this.props.onItemAdderDeadlineChange(this.props.index, e.target.value)}/>
 
                             </Row>
 
@@ -709,9 +736,12 @@ class Footer extends React.Component {
         return (
             <footer className="footer">
                 <Button className={'footer__button '} onClick={() => this.props.changedFilter("all")}>All</Button>
-                <Button className={'footer__button '} onClick={() => this.props.changedFilter("noncompleted")}>Active</Button>
-                <Button className={'footer__button '} onClick={() => this.props.changedFilter("completed")}>Completed</Button>
-                <Button className={'footer__button '} onClick={() => this.props.changedFilter("expired")}>Expired</Button>
+                <Button className={'footer__button '}
+                        onClick={() => this.props.changedFilter("noncompleted")}>Active</Button>
+                <Button className={'footer__button '}
+                        onClick={() => this.props.changedFilter("completed")}>Completed</Button>
+                <Button className={'footer__button '}
+                        onClick={() => this.props.changedFilter("expired")}>Expired</Button>
 
             </footer>
         )

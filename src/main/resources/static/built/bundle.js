@@ -42821,6 +42821,7 @@ class App extends React.Component {
     this.handleUpdatedListNameChange = this.handleUpdatedListNameChange.bind(this);
     this.handleItemAdderNameChange = this.handleItemAdderNameChange.bind(this);
     this.handleItemAdderDescriptionChange = this.handleItemAdderDescriptionChange.bind(this);
+    this.handleItemAdderDeadlineChange = this.handleItemAdderDeadlineChange.bind(this);
     this.handleNewList = this.handleNewList.bind(this);
     this.handleDeleteList = this.handleDeleteList.bind(this);
     this.handleUpdateList = this.handleUpdateList.bind(this);
@@ -42838,7 +42839,7 @@ class App extends React.Component {
         todoLists: json,
         todoItemAdderName: new Array(json.length).fill(''),
         todoItemAdderDescription: new Array(json.length).fill(''),
-        todoItemAdderDeadline: new Array(json.length).fill('')
+        todoItemAdderDeadline: new Array(json.length).fill(moment().format("DD/MM/YYYY"))
       });
     });
   }
@@ -42859,6 +42860,16 @@ class App extends React.Component {
       myTodoItemAdders[index] = name;
       return {
         todoItemAdderDescription: myTodoItemAdders
+      };
+    });
+  }
+
+  handleItemAdderDeadlineChange(index, name) {
+    this.setState(function (prevState, props) {
+      let myTodoItemAdders = prevState.todoItemAdderDeadline;
+      myTodoItemAdders[index] = name;
+      return {
+        todoItemAdderDeadline: myTodoItemAdders
       };
     });
   }
@@ -42901,10 +42912,13 @@ class App extends React.Component {
   }
 
   handleNewItem(index, listId) {
+    console.log(moment(this.state.todoItemAdderDeadline[index], "DD/MM/YYYY").isValid());
     let newItem = {
       name: this.state.todoItemAdderName[index],
-      description: this.state.todoItemAdderDescription[index]
+      description: this.state.todoItemAdderDescription[index],
+      deadline: moment(this.state.todoItemAdderDeadline[index], "DD/MM/YYYY").isValid() ? moment(this.state.todoItemAdderDeadline[index], "DD/MM/YYYY").format("YYYY-MM-DD") : moment().format("YYYY-MM-DD")
     };
+    console.log(newItem);
     fetch('/lists/' + listId + '/items', {
       method: 'POST',
       credentials: 'same-origin',
@@ -42926,10 +42940,13 @@ class App extends React.Component {
         myTodoItemAdders[index] = '';
         let myTodoItemAddersDescription = prevState.todoItemAdderDescription;
         myTodoItemAddersDescription[index] = '';
+        let myTodoItemAddersDeadline = prevState.todoItemAdderDeadline;
+        myTodoItemAddersDeadline[index] = moment().format("DD/MM/YYYY");
         return {
           todoLists: myTodoLists,
           todoItemAdderName: myTodoItemAdders,
-          todoItemAdderDescription: myTodoItemAddersDescription
+          todoItemAdderDescription: myTodoItemAddersDescription,
+          todoItemAdderDeadline: myTodoItemAddersDeadline
         };
       });
     });
@@ -42986,11 +43003,13 @@ class App extends React.Component {
       lists: this.state.todoLists,
       itemAdderName: this.state.todoItemAdderName,
       itemAdderDescription: this.state.todoItemAdderDescription,
+      itemAdderDeadline: this.state.todoItemAdderDeadline,
       updatedListName: this.state.updatedListName,
       onDeleteList: this.handleDeleteList,
       onUpdateList: this.handleUpdateList,
       onListNameChange: this.handleUpdatedListNameChange,
       onItemAdderDescriptionChange: this.handleItemAdderDescriptionChange,
+      onItemAdderDeadlineChange: this.handleItemAdderDeadlineChange,
       onItemAdderNameChange: this.handleItemAdderNameChange,
       onAddItem: this.handleNewItem
     }));
@@ -43095,9 +43114,11 @@ class TodoLists extends React.Component {
       items: list.items,
       onItemAdderNameChange: this.props.onItemAdderNameChange,
       onItemAdderDescriptionChange: this.props.onItemAdderDescriptionChange,
+      onItemAdderDeadlineChange: this.props.onItemAdderDeadlineChange,
       onAddItem: this.props.onAddItem,
       itemAdderName: this.props.itemAdderName[index],
-      itemAdderDescription: this.props.itemAdderDescription[index]
+      itemAdderDescription: this.props.itemAdderDescription[index],
+      itemAdderDeadline: this.props.itemAdderDeadline[index]
     })));
     return React.createElement("div", null, todoLists);
   }
@@ -43128,6 +43149,13 @@ class TodoList extends React.Component {
     this.setState({
       items: this.props.items,
       originalitems: this.props.items
+    });
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.items.length < this.props.items) this.setState({
+      items: prevProps.items,
+      originalitems: prevProps.items
     });
   }
 
@@ -43361,10 +43389,11 @@ class TodoList extends React.Component {
     }))), React.createElement(Col, {
       sm: 2
     }, React.createElement(Row, null, React.createElement("div", null, " Expired Date:")), React.createElement(Row, null, React.createElement("input", {
-      type: "date",
-      "data-date": "",
-      "data-date-format": "DD MMMM YYYY",
-      value: "2015-08-09"
+      type: "text",
+      className: "form__input",
+      placeholder: "DD/MM/YYYY",
+      value: this.props.itemAdderDeadline,
+      onChange: e => this.props.onItemAdderDeadlineChange(this.props.index, e.target.value)
     }))), React.createElement(Col, {
       sm: 1
     }, " ", React.createElement(Row, null, React.createElement("div", null, " '")), React.createElement(Row, null, React.createElement(Button, {

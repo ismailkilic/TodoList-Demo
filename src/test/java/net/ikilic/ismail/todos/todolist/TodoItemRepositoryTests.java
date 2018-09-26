@@ -36,13 +36,13 @@ public class TodoItemRepositoryTests {
     @Test
     public void testCreate() {
         TodoItem todoItem = new TodoItem();
-        todoItem.setName("buy milk");
+        todoItem.setName("be successfully");
         todoItem.setList(todoList);
         todoItem.setOwner(owner);
         repository.save(todoItem);
 
         TodoItem loadedItem = repository.findOne(14L);
-        assertThat(loadedItem.getName()).isEqualTo("buy milk");
+        assertThat(loadedItem.getName()).isEqualTo("be successfully");
 
         TodoList loadedTodoList = entityManager.find(TodoList.class, 1L);
         assertThat(loadedTodoList.getItems()).contains(loadedItem);
