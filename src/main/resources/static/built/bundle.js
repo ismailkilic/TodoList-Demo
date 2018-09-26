@@ -42912,13 +42912,11 @@ class App extends React.Component {
   }
 
   handleNewItem(index, listId) {
-    console.log(moment(this.state.todoItemAdderDeadline[index], "DD/MM/YYYY").isValid());
     let newItem = {
       name: this.state.todoItemAdderName[index],
       description: this.state.todoItemAdderDescription[index],
       deadline: moment(this.state.todoItemAdderDeadline[index], "DD/MM/YYYY").isValid() ? moment(this.state.todoItemAdderDeadline[index], "DD/MM/YYYY").format("YYYY-MM-DD") : moment().format("YYYY-MM-DD")
     };
-    console.log(newItem);
     fetch('/lists/' + listId + '/items', {
       method: 'POST',
       credentials: 'same-origin',
@@ -42942,6 +42940,9 @@ class App extends React.Component {
         myTodoItemAddersDescription[index] = '';
         let myTodoItemAddersDeadline = prevState.todoItemAdderDeadline;
         myTodoItemAddersDeadline[index] = moment().format("DD/MM/YYYY");
+        console.log("window.location.reload(); // shity code, It will be fix.  TodoItemList is not refreshing when delete todoItem after than add a new todoItem");
+        window.location.reload(); // shity code, It will be fix.  TodoItemList is not refreshing when delete todoItem after than add a new todoItem
+
         return {
           todoLists: myTodoLists,
           todoItemAdderName: myTodoItemAdders,
@@ -43143,21 +43144,19 @@ class TodoList extends React.Component {
       items: [],
       originalitems: []
     };
-  }
+  } //
+
 
   componentDidMount() {
     this.setState({
       items: this.props.items,
       originalitems: this.props.items
     });
-  }
+  } //
+  // componentWillMount() {
+  //     this.setState({items: this.props.items, originalitems: this.props.items});
+  // }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.items.length < this.props.items) this.setState({
-      items: prevProps.items,
-      originalitems: prevProps.items
-    });
-  }
 
   toggleEditingOff() {
     this.setState({
@@ -43227,7 +43226,7 @@ class TodoList extends React.Component {
       credentials: 'same-origin'
     }).then(response => {
       this.setState(function (prevState, props) {
-        let myItems = prevState.originalitems.filter(item => item.id !== itemId);
+        let myItems = prevState.items.filter(item => item.id !== itemId);
         myItems.forEach(function (item) {
           if (item.items != null && item.items.length > 0) {
             item.items = item.items.filter(i => i.id !== itemId);
